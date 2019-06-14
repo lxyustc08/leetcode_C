@@ -44,6 +44,9 @@ double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Si
     pos_start = search_i = search_j = pos_end = 0;
     pos_end = range - 1;
 
+    float median = 0.0;
+
+    // find the position
     while((search_i = (pos_start + pos_start) / 2) >= 1){
         search_j = numsTSize - search_i;
         if(length_short[search_i - 1] > length_long[search_j]){ // the search_i is too bigger, move forward
@@ -52,7 +55,81 @@ double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Si
         else if(length_long[search_j - 1] > length_short[search_i]){ // the search_i is too small, move down
             pos_start = search_i;
         }
+        else // find the result
+            break;
+    } 
+
+    if(search_i >= 1){
+        // find the result
+        int numadd = nums1Size + nums2Size;
+        if(numadd % 2 == 1){
+            // the total size is odd, at this condition, the right number is one more than left number
+            // so the median is one of length_short[search_i] and length_long[search_j]
+            int tmpvalue = length_short[search_i] > length_long[search_j] ? 
+                    length_long[search_j] : length_short[search_i];
+            median = (float)tmpvalue;
+            
+        }
+        else{
+            // the total size is even, at this condition, the median is computed as follow:
+            // max(length_short[search_i - 1], length_long[search_j - 1]) + min(length_short[search_i], length_long[search_j]) / 2
+            int max_left = length_short[search_i - 1] > length_long[search_j - 1] ?
+                            length_short[search_i - 1] : length_long[search_j - 1];
+            int min_rigth = length_short[search_i] > length_long[search_j] ?
+                            length_long[search_j] : length_short[search_i];
+            median = ((float)max_left + (float)min_rigth) / 2.0;
+        }
     }
+    else
+    {
+        // the search_i is less than 1
+        // at that time, we must check the relationship between lengthshort[search_i], length_long[search_j - 1]
+        // we also must check the varable search_j - 1 is legal or not
+        search_j = numsTSize - search_i;
+        if(search_j >= 1){
+           if(length_short[search_i] >= length_long[search_j - 1]){
+               int numadd = nums1Size + nums2Size;
+               if(numadd % 2 == 1){
+                    int tmpvalue = length_short[search_i] > length_long[search_j] ?
+                        length_long[search_j] : length_short[search_i];
+                    median = (float)tmpvalue;
+               }
+               else{
+                    int min_rigth = length_short[search_i] > length_long[search_j] ?
+                            length_long[search_j] : length_short[search_i];
+                    median = ((float)length_long[search_j - 1] + (float)min_rigth) / 2.0;
+               }
+           }
+           else{
+               if(search_j >= 2){
+                   int new_search_j = search_j - 1;
+                   int numadd = nums1Size + nums2Size;
+                   if(numadd % 2 == 1)
+                   {
+                       median = (float)length_long[new_search_j];
+                   }
+                   else
+                   {
+                       int max_right = length_short[search_i] > length_long[new_search_j] ?
+                            length_short[search_i] : length_long[new_search_j];
+                        median = ((float)max_right + length_long[new_search_j]) / 2.0;
+                   }
+                else
+                {
+                    median = (float)length_long[search_j - 1];   
+                }
+                
+               }
+           }
+        }
+        else
+        {
+            // this situation just accute num1Size = num2Size = 1
+            median = ((float)length_long[search_j] + (float)length_short[search_i]) / 2.0;
+        }
+    }
+
+    return median;
 }
 
 int main(int argc, char* argv[]){
