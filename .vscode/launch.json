@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/median_of_two_sorted_arrays",
+            "program": "${workspaceFolder}/longest_palindromic_substring.out",
             "args": ["abc"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
